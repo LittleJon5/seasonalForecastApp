@@ -1,0 +1,70 @@
+
+h1, h2, h3, h4, h5, #table {
+  font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  text-align: center;
+}
+
+h1 {
+  font-size: 48px;
+	font-style: bold;
+	font-variant: normal;
+	line-height: 30px;
+  color: #FFFFFF;
+  padding-bottom: 35px;
+  padding-top: 10px;
+}
+
+h2 {
+  font-size: 12px;
+  font-style: normal;
+	font-variant: normal;
+	line-height: 20px;
+  color: #FFFFFF;
+}
+
+h3 {
+  font-size: 24px;
+  line-height: 1.1;
+  color: rgb(51, 122, 183);
+  font-style: bold;
+  clear:both;
+}
+
+h4 {
+  font-size: 16px;
+  color: #000000;
+  line-height: 15px;
+}
+
+h5 {
+  padding-top: 10px;
+  letter-spacing: 2px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+body {
+  background-color: #000000;
+  font-size: 16px;
+}
+
+#getData {
+  background-color: #10851A;
+  float: right;
+  right: 8px;
+  font-size: 15px;
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-style: bold;
+}
+
+#table {
+  margin-right: 8%;
+  margin-left: 20%;
+  font-size: 15px;
+  color: #ffffff;
+}
+
+}

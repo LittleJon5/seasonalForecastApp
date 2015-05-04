@@ -5,8 +5,8 @@ require("lubridate")
 require("ggplot2")
 require("gridExtra")
 require("reshape2")
-require(tseries)
-require(lubridate)
+require("tseries")
+require("lubridate")
 
 # Get data from FRED
 
@@ -25,6 +25,8 @@ stl.plot.data <- as.data.frame(retail.stl$time.series)
 
 stl.plot.data$time <- as.Date(time(retail))
 stl.plot.data$value <- retail$RSAFSNA
+
+four.way.frame(retail.stl, retail)
 
 # Plot Data for the forecast imitation
 
@@ -86,7 +88,6 @@ ggplot(data = past) +
 # Bar Chart 
 ############
 
-
 barLabels <- mon[sindex %>% as.timeSeries %>% month]
 barplot(as.numeric(sindex), names.arg = barLabels)
 
@@ -96,21 +97,27 @@ barplot(as.numeric(sindex), names.arg = barLabels)
 plot(retail.forecast)
 # I think that the general idea of how to get the month labels will work here too
 
-mon <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
-         "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")  # vector used for assignement
+barChartData <- function(stl.forecast){
+  
+  mon <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+           "Jul", "Aug", "Sept", "Oct", "Nov", "Dec")  # vector used for assignement
+  
+  season <- stl.forecast$seasonal
+  
+  time <- as.Date(time(season))
+  
+  value <- data.frame(season)
+  
+  months <- factor(mon[month(time)], levels = mon)
+  
+  plot.data <- cbind(time, value, months)
+  
+  return(plot.data)
+}
 
-season <- retail.forecast$seasonal
+bar.data <- barChartData(retail.forecast)
 
-time <- as.Date(time(season))
-
-value <-  data.frame(season)
-
-months <- factor(mon[month(time)], levels = mon)
-
-plot.data <- cbind(time, value, months) %>% data.frame
-
-
-ggplot(data = plot.data, aes(x = months, y = season)) +
+ggplot(data = bar.data, aes(x = months, y = season)) +
   geom_bar(stat = "identity", color = "blue") +
   labs(x = " \n Time", y = " \n Season")
 
