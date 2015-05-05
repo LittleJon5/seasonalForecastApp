@@ -88,7 +88,7 @@ shinyServer(function(input, output) {
     ##################
     stl.model <- reactive({
                         (fred.final()/ as.numeric(input$scalefactor)) %>%
-                        stl(s.window = "periodic")
+                        stl(s.window = "periodic", na.action = na.omit)
                         })
     
     stl.forecast <- reactive({
@@ -102,7 +102,7 @@ shinyServer(function(input, output) {
    
     output$timeseries <- renderPlot({
       
-      plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
+      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
       
       startDate <- plot.data$time[1] %>% as.Date %>% as.character
       endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
@@ -121,7 +121,7 @@ shinyServer(function(input, output) {
     })
     
     output$trend <- renderPlot({
-      plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
+      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
       
       startDate <- plot.data$time[1] %>% as.Date %>% as.character
       endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
@@ -141,7 +141,7 @@ shinyServer(function(input, output) {
     
     output$season <- renderPlot({
       
-      plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
+      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
       
       startDate <- plot.data$time[1] %>% as.Date %>% as.character
       endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
@@ -157,6 +157,14 @@ shinyServer(function(input, output) {
         geom_line(aes(y = seasonal, x = time), color = "blue" ) +
         labs(x = "Date", y = "Value \n") +
         scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
+    })
+    
+    output$debug <- renderTable({
+      
+      plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
+      
+      plot.data
+      
     })
     
     output$barChart <- renderPlot({

@@ -107,8 +107,9 @@ shinyUI(fluidPage(
                    h2(verbatimTextOutput("text3"))),
           tabPanel("Forecasts",
                    helpText(h5("Forecasted Values")),
-                   h5(tableOutput("table"))
-        )
+                   h5(tableOutput("table"))),
+          tabPanel("Debug",
+                   tableOutput("debug"))
       
              )
   ))))
