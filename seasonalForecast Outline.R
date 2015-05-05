@@ -50,20 +50,20 @@ past <- past.data(retail.forecast)
 future <- forecast.plot.frame(retail.forecast)
 
 startDate <- past$time[1]
-endDate <- future$Date[nrow(future)]
+endDate <- future$time[nrow(future)]
 
-input.date <- as.Date(time(retail.forecast$mean[1]))
+input.date <- as.Date(time(retail.forecast$mean[1])) %>% as.character
 
 load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
-recessions <- subset(recessions, Start >= input.date)
+recessions <- subset(recessions, Start >= input.date ) # input date is character format
 
 ggplot(data = past) +
-#   geom_ribbon(data = recessions, aes(xmin = Start,
-#                                      xmax = End, 
-#                                      ymin = -Inf,
-#                                      ymax = +Inf),
-#               fill = 'grey65',
-#               alpha = 0.4 ) +
+  geom_rect(data = recessions, aes(xmin = Start,
+                                     xmax = End, 
+                                     ymin = -Inf,
+                                     ymax = +Inf),
+              fill = 'grey65',
+              alpha = 0.4 ) +
   
   geom_ribbon(data = future,
               fill = 'lightblue',

@@ -104,30 +104,59 @@ shinyServer(function(input, output) {
       
       plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
       
-      ggplot(data = plot.data, aes(y = value, x = time)) +
-        geom_point() +
-        geom_line() +
-        labs(x = "Date", y = "Value \n")
+      startDate <- plot.data$time[1] %>% as.Date %>% as.character
+      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
+      
+      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
+      recessions <- subset(recessions, Start >= startDate)
+      
+      ggplot(data = plot.data) +
+        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
+                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
+        geom_point(aes(y = value, x = time), color = "red") +
+        geom_line(aes(y = value, x = time), color = "blue") +
+        labs(x = "Date", y = "Value \n") +
+        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
       
     })
     
     output$trend <- renderPlot({
       plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
       
-      ggplot(data = plot.data, aes(y = trend, x = time)) +
-        geom_point() +
-        geom_line() +
-        labs(x = "Date", y = "Value \n")
+      startDate <- plot.data$time[1] %>% as.Date %>% as.character
+      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
+      
+      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
+      recessions <- subset(recessions, Start >= startDate)
+      
+      
+      ggplot(data = plot.data) +
+        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
+                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
+        geom_point(aes(y = trend, x = time), color = "red") +
+        geom_line(aes(y = trend, x = time), color = "blue") +
+        labs(x = "Date", y = "Value \n") +
+        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
     })
     
     output$season <- renderPlot({
       
       plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
       
-      ggplot(data = plot.data, aes(y = seasonal, x = time)) +
-        geom_point() +
-        geom_line() +
-        labs(x = "Date", y = "Value \n")
+      startDate <- plot.data$time[1] %>% as.Date %>% as.character
+      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
+      
+      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
+      recessions <- subset(recessions, Start >= startDate)
+      
+      
+      ggplot(data = plot.data) +
+        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
+                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
+        geom_point(aes(y = seasonal, x = time), color = "red" ) +
+        geom_line(aes(y = seasonal, x = time), color = "blue" ) +
+        labs(x = "Date", y = "Value \n") +
+        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
     })
     
     output$barChart <- renderPlot({
@@ -135,7 +164,7 @@ shinyServer(function(input, output) {
       bar.data <- barChartData(stl.forecast())
       
       ggplot(data = bar.data, aes(x = months, y = season)) +
-        geom_bar(stat = "identity", color = "blue") +
+        geom_bar(stat = "identity", color = "blue", fill= "yellow") +
         labs(x = " \n Time", y = " \n Season")
       
     })

@@ -5,10 +5,9 @@ library(fImport)
 
 shinyUI(fluidPage(
   
-  includeCSS("styles.css"),
   
 # ------------------------- This loads the css file for apps style
-  # includeCSS("styles.css"),
+  includeCSS("styles.css"),
   
   titlePanel(h1("US Macroeconomic Situation and Forecast")),
   

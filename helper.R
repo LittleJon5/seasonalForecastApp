@@ -132,7 +132,7 @@ past.data <- function(ets.data){
 four.way.frame <- function(stl.model, fred.data) {
   
   stl.plot.data <- stl.model$time.series %>% as.data.frame
-  stl.plot.data$time <- stl.model$time.series %>% time 
+  stl.plot.data$time <- stl.model$time.series %>% time %>% as.Date
   stl.plot.data$value <- fred.data %>% as.numeric
   return(stl.plot.data)
 }
