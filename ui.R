@@ -86,6 +86,7 @@ shinyUI(fluidPage(
     
     mainPanel(
         tabsetPanel(
+          tabPanel("Forecast Graph", h5(plotOutput("plot"))),
           tabPanel("Trend Break Down",
                    helpText(h5("Time Series")),
                    h5(plotOutput("timeseries")),
@@ -93,11 +94,9 @@ shinyUI(fluidPage(
                    h5(plotOutput("trend")),
                    helpText(h5("Seasonality")),
                    h5(plotOutput("season"))
-                   
-                   ),
+          ),
           tabPanel("Seasonal Bar Chart",
                    h5(plotOutput("barChart"))),
-          tabPanel("Forecast Graph", h5(plotOutput("plot"))),
           tabPanel("Model",
                    helpText(h5("Method")),
                    h2(verbatimTextOutput("text")),
@@ -107,9 +106,6 @@ shinyUI(fluidPage(
                    h2(verbatimTextOutput("text3"))),
           tabPanel("Forecasts",
                    helpText(h5("Forecasted Values")),
-                   h5(tableOutput("table"))),
-          tabPanel("Debug",
-                   tableOutput("debug"))
+                   h5(tableOutput("table")))
       
-             )
-  ))))
+  )))))
