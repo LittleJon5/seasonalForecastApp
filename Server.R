@@ -159,14 +159,26 @@ shinyServer(function(input, output) {
         scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
     })
     
-    output$debug <- renderTable({
-      
-      plot.data <- four.way.frame(stl.model(), fred.data()) %>% as.data.frame
-      
-      plot.data
-      
-    })
-    
+   output$resid <- renderPlot({
+     
+     plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
+     
+     startDate <- plot.data$time[1] %>% as.Date %>% as.character
+     endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
+     
+     load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
+     recessions <- subset(recessions, Start >= startDate)
+     
+     
+     ggplot(data = plot.data) +
+       geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
+                                             ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
+       geom_bar(aes(y = remainder, x = time), color = "blue", stat = "identity" ) +
+       labs(x = "Date", y = "Value \n") +
+       scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
+     
+   })
+   
     output$barChart <- renderPlot({
       
       bar.data <- barChartData(stl.forecast())
