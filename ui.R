@@ -52,12 +52,6 @@ shinyUI(fluidPage(
                               "Natural Log"),
                   selected = "No Transformation"),
       
-      selectInput("Period",
-                  label = h4("Period Type"),
-                  c("Monthly" = 12,
-                    "Quarterly" = 4),
-                  selected = "Monthly"),
-      
       selectInput("scalefactor", 
                   label = h4("Scale Factor"), 
                   c("No Change" = 1,
@@ -87,23 +81,25 @@ shinyUI(fluidPage(
     mainPanel(
         tabsetPanel(
           tabPanel("Forecast Graph", h5(plotOutput("plot"))),
-          tabPanel("Trend Break Down",
+          tabPanel("Decomposition",
                    helpText(h5("Time Series")),
                    h5(plotOutput("timeseries")),
                    helpText(h5("Trend")),
                    h5(plotOutput("trend")),
                    helpText(h5("Seasonality")),
-                   h5(plotOutput("season"))
+                   h5(plotOutput("season")),
+                   helpText(h5("Residuals")),
+                   h5(plotOutput("resid"))
+                   
           ),
-          tabPanel("Seasonal Bar Chart",
+          tabPanel("Additive Seasonal Index",
                    h5(plotOutput("barChart"))),
           tabPanel("Model",
                    helpText(h5("Method")),
                    h2(verbatimTextOutput("text")),
-                   helpText(h5("Smooth Parameters")),
-                   h2(verbatimTextOutput("text2")),
-                   helpText(h5("Model")),
-                   h2(verbatimTextOutput("text3"))),
+                   helpText(h5("ETS Transition Equation:")),
+                   helpText(h5("Smoothing Constants and Estimated Parameters")),
+                   h2(verbatimTextOutput("text2"))),
           tabPanel("Forecasts",
                    helpText(h5("Forecasted Values")),
                    h5(tableOutput("table")))

@@ -83,7 +83,7 @@ shinyServer(function(input, output) {
                             })
 ######################
     # The next function takes the final time series and scales it
-    # next it makes an ets model
+    # next it makes an estl model
     # then if forecast the models out by how ever far the user desires
     ##################
     stl.model <- reactive({
@@ -97,120 +97,56 @@ shinyServer(function(input, output) {
 ########################
     # this part out puts the model paramerter the model table on the ui
     #####################
-    
-      
    
     output$timeseries <- renderPlot({
       
-      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
-      
-      startDate <- plot.data$time[1] %>% as.Date %>% as.character
-      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
-      
-      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
-      recessions <- subset(recessions, Start >= startDate)
-      
-      ggplot(data = plot.data) +
-        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
-                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
-        geom_point(aes(y = value, x = time), color = "red") +
-        geom_line(aes(y = value, x = time), color = "blue") +
-        labs(x = "Date", y = "Value \n") +
-        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
-      
+      trendPlots(stl.model(), stl.forecast(), "indicator")
     })
     
     output$trend <- renderPlot({
-      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
       
-      startDate <- plot.data$time[1] %>% as.Date %>% as.character
-      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
-      
-      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
-      recessions <- subset(recessions, Start >= startDate)
-      
-      
-      ggplot(data = plot.data) +
-        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
-                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
-        geom_point(aes(y = trend, x = time), color = "red") +
-        geom_line(aes(y = trend, x = time), color = "blue") +
-        labs(x = "Date", y = "Value \n") +
-        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
+      trendPlots(stl.model(), stl.forecast(), "trend")
     })
     
     output$season <- renderPlot({
       
-      plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
+      trendPlots(stl.model(), stl.forecast(), "seasonal")
       
-      startDate <- plot.data$time[1] %>% as.Date %>% as.character
-      endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
-      
-      load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
-      recessions <- subset(recessions, Start >= startDate)
-      
-      
-      ggplot(data = plot.data) +
-        geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
-                                              ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
-        geom_point(aes(y = seasonal, x = time), color = "red" ) +
-        geom_line(aes(y = seasonal, x = time), color = "blue" ) +
-        labs(x = "Date", y = "Value \n") +
-        scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
     })
     
    output$resid <- renderPlot({
      
-     plot.data <- four.way.frame(stl.model(), stl.forecast()) %>% as.data.frame
-     
-     startDate <- plot.data$time[1] %>% as.Date %>% as.character
-     endDate <- plot.data$time[nrow(plot.data)] %>% as.Date
-     
-     load(url("http://marriottschool.net/teacher/govfinance/recessions.RData"))
-     recessions <- subset(recessions, Start >= startDate)
-     
-     
-     ggplot(data = plot.data) +
-       geom_rect ( data = recessions , aes ( xmin = Start , xmax = End , 
-                                             ymin = -Inf , ymax = +Inf ) , fill = 'grey65', alpha = 0.4 ) +
-       geom_bar(aes(y = remainder, x = time), color = "blue", stat = "identity" ) +
-       labs(x = "Date", y = "Value \n") +
-       scale_x_date( "" , limits = c( as.Date(startDate) , as.Date(endDate) ) )
+     trendPlots(stl.model(), stl.forecast(), "remainder")
      
    })
    
+
+# Seasonal Bar chart ------------------------------------------------------
+
     output$barChart <- renderPlot({
       
-      bar.data <- barChartData(stl.forecast())
-      
-      ggplot(data = bar.data, aes(x = months, y = season)) +
-        geom_bar(stat = "identity", color = "blue", fill= "yellow") +
-        labs(x = " \n Time", y = " \n Season")
+      seasonalPlot(stl.forecast())
       
     })
     
     output$text <- renderPrint({
       
-      stl.forecast()$model$method
-                                    
+      stl.forecast()$model$method %>% 
+        as.character %>% 
+        cat
+      
       })
     
     
     
     output$text2 <- renderPrint({
       
-      stl.forecast()$model$par
+      modelParametersSTL(stl.forecast())
       
     })
     
     
-    output$text3 <- renderPrint({
-      
-      nrow.value <- nrow(stl.forecast()$model$states)
-      
-      stl.forecast()$model$states[nrow.value, ]
-      
-    })
+    
     
 #############################
     # This displays the forecast information
@@ -243,11 +179,9 @@ shinyServer(function(input, output) {
            When this message disappears your forecast is on its way.")
     )
      
-    forecast.df <- forecast.plot.frame(stl.forecast())
- 
-    plot.data <- past.data(stl.forecast())
-    
-    ggforecast(plot.data, forecast.df, input$smooth, input$date)
+     plotData <<- forecastPlotData(stl.forecast(), fred.final())
+     
+     forecastPlot(plotData, input$smooth, input$date)
     
  })
    
